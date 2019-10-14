@@ -1,0 +1,67 @@
+      * Demonstrates the use of INDEX, SEARCH AND SEARCHALL 
+      *
+      * SEARCH IS A LINEAR SEARCH AND DATA NEED NOT BE SORTED
+      * 
+      * SEARCHALL IS BINARY SEARCH AND DATA MUST BE SORTED. 
+      * 
+      *****************************************************************
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. INDXSRCH.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-EMP-TABLE.
+         05 WS-EMP-RECORD OCCURS 6 TIMES
+               ASCENDING KEY IS WS-EMP-ID INDEXED BY EMP-IDX.
+           10 WS-EMP-ID PIC 9(2).
+           10 WS-EMP-DEPT PIC X(4).
+
+       PROCEDURE DIVISION.
+           MOVE '01IT  02ACCT03PAYR04HR  05TRNG06MAINT' TO
+             WS-EMP-TABLE.
+
+      * SEARCH TABLE STARTING FROM FIRST OCCURENCE
+
+           SET EMP-IDX TO 1.
+           SEARCH WS-EMP-RECORD
+               AT END
+                   DISPLAY 'RECORD NOT FOUND'
+               WHEN WS-EMP-DEPT(EMP-IDX) = "PAYR"
+                   DISPLAY 'SEARCH RECORD FOUND '
+                   DISPLAY "EMPID : " WS-EMP-ID(EMP-IDX)
+           END-SEARCH.
+
+      * SET INDEX TO 3 AND SEARCH FOR SECOND ITEM. YOU SHOULD GET
+      * RECORD NOT FOUND MESSAGE AS SEARCH STARTS AT POSITION 3.
+           SET EMP-IDX TO 3.
+           SEARCH WS-EMP-RECORD
+               AT END
+                   DISPLAY 'SEARCH RECORD NOT FOUND'
+               WHEN WS-EMP-DEPT(EMP-IDX) = "ACCT"
+                   DISPLAY 'SEARCH RECORD FOUND '
+                   DISPLAY "EMPID : " WS-EMP-ID(EMP-IDX)
+           END-SEARCH.
+
+      *  SEARCH ALL - BINARY SEARCH. FASTER BUT DATA NEEDS TO BE SORTED
+           SEARCH ALL WS-EMP-RECORD
+               AT END
+                   DISPLAY 'SEARCH ALL RECORD NOT FOUND'
+               WHEN WS-EMP-ID(EMP-IDX) = 05 
+                   DISPLAY 'SEARCH ALL RECORD FOUND '
+                   DISPLAY "DEPT : " WS-EMP-DEPT(EMP-IDX)
+           END-SEARCH.
+
+      *  SEARCH ALL WITH UNSORTED DATA. RESULTS ARE UNPREDICTABLE
+
+           MOVE '06IT  01ACCT00PAYR06HR  06TRNG06MAINT' TO
+             WS-EMP-TABLE.
+           SEARCH ALL WS-EMP-RECORD
+               AT END
+                   DISPLAY 'SEARCH ALL RECORD NOT FOUND'
+               WHEN WS-EMP-ID(EMP-IDX) = 06
+                   DISPLAY 'SEARCH ALL RECORD FOUND '
+                   DISPLAY "DEPT : " WS-EMP-DEPT(EMP-IDX)
+           END-SEARCH.
+
+           STOP RUN.
